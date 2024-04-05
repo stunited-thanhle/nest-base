@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  app-dev:
+    build:
+      context: .
+      target: development
+    container_name: devplus
+    ports:
+      - 3000:3000
+    command: sh -c "npm run start:dev"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+
+  # app-prod:
+  #   build:
+  #     context: .
+  #     target: production
+  #   container_name: devplus
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - postgres
+
+  postgres:
+    image: ${DB_IMAGE}
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5432:${DB_PORT}
+    volumes:
+      - postgresqldata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgresqldata:
